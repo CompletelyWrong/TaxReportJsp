@@ -16,17 +16,19 @@ import service.validator.Validator;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static java.util.Objects.isNull;
 
 public class InspectorServiceImpl implements InspectorService {
     private static final Logger LOGGER = Logger.getLogger(InspectorServiceImpl.class);
+
     private final InspectorDao inspectorDao;
     private final InspectorMapper mapper;
-    private final Validator<Inspector> validator;
+    private final Validator validator;
     private final PasswordEncoder encoder;
 
-    public InspectorServiceImpl(InspectorDao inspectorDao, InspectorMapper mapper, Validator<Inspector> validator, PasswordEncoder encoder) {
+    public InspectorServiceImpl(InspectorDao inspectorDao, InspectorMapper mapper, Validator validator, PasswordEncoder encoder) {
         this.inspectorDao = inspectorDao;
         this.mapper = mapper;
         this.validator = validator;
@@ -35,47 +37,88 @@ public class InspectorServiceImpl implements InspectorService {
 
     @Override
     public Inspector createInspector(Inspector inspector) {
-        validator.validate(inspector);
+        validator.validateInspector(inspector);
 
-        if (inspectorDao.findByLogin(inspector.getEmail()).isPresent()) {
+        if (inspectorDao.findByEmail(inspector.getEmail()).isPresent()) {
             LOGGER.warn("Inspector with such login is already exist");
             throw new AlreadyExistUserException("Inspector with such login is already exist");
         }
+
         String encoded = encoder.encode(inspector.getPassword()).
-                orElseThrow(() -> new InvalidEncodingException("Encode process exception"));
+                orElseThrow(() -> {
+                    LOGGER.warn("Encode process exception");
+                    return new InvalidEncodingException("Encode process exception");
+                });
         Inspector withEncodedPass = new Inspector(inspector, encoded);
         inspectorDao.save(mapper.mapInspectorToInspectorEntity(withEncodedPass));
+
         return withEncodedPass;
     }
 
     @Override
-    public Inspector login(String login, String password) {
+    public Inspector login(String email, String password) {
+        if (isNull(email) || isNull(password)) {
+            LOGGER.warn("Email / password id is null");
+            throw new IllegalArgumentException("Email / password id is null");
+        }
 
         String encoded = encoder.encode(password).
-                orElseThrow(() -> new InvalidEncodingException("Encode process exception"));
-        Optional<InspectorEntity> inspectorEntity = inspectorDao.findByLogin(login);
+                orElseThrow(() -> {
+                    LOGGER.warn("Encode process exception");
+                    return new InvalidEncodingException("Encode process exception");
+                });
 
-        if (!inspectorEntity.isPresent()) {
-            LOGGER.warn("There is no inspector with such login");
-            throw new UserNotFoundException("There is no inspector with such login");
-        } else {
-            if (inspectorEntity.get().getPassword().equals(encoded)) {
-                return mapper.mapInspectorEntityToInspector(inspectorEntity.get());
-            } else {
-                LOGGER.warn("Incorrect password");
-                throw new UserNotFoundException("Incorrect password");
-            }
+        InspectorEntity inspectorEntity = inspectorDao.findByEmail(email).orElseThrow(() -> {
+            LOGGER.warn("There is no user with this email");
+            return new UserNotFoundException("There is no user with this email");
+        });
+
+        if (Objects.equals(inspectorEntity.getPassword(), encoded)) {
+            return mapper.mapInspectorEntityToInspector(inspectorEntity);
         }
+
+        LOGGER.warn("Incorrect password");
+        throw new UserNotFoundException("Incorrect password");
     }
 
     @Override
-    public Inspector findInspectorByUserId(Long id) {
-        if (Objects.isNull(id)) {
-            LOGGER.warn("parameters are empty");
-            throw new UserNotFoundException("Inspector was not found");
+    public Inspector findInspectorByUserId(Long userId) {
+        if (isNull(userId)) {
+            LOGGER.warn("User id is null");
+            throw new UserNotFoundException("User id is null");
         }
-        return mapper.mapInspectorEntityToInspector(inspectorDao.findByUserId(id)
-                .orElseThrow(() -> new UserNotFoundException("Inspector was not found")));
+
+        return inspectorDao.findByUserId(userId)
+                .map(mapper::mapInspectorEntityToInspector)
+                .orElseThrow(() -> {
+                    LOGGER.warn("There is no inspector with this such id");
+                    return new UserNotFoundException("There is no inspector with this such id");
+                });
+    }
+
+    @Override
+    public Inspector findWithLessUsers() {
+        return inspectorDao.findWithLessUsers()
+                .map(mapper::mapInspectorEntityToInspector)
+                .orElseThrow(() -> {
+                    LOGGER.warn("There is no inspector in system");
+                    return new UserNotFoundException("There is no inspector in system");
+                });
+    }
+
+    @Override
+    public Inspector findWithLessUsersExceptThisId(Long inspectorId) {
+        if (isNull(inspectorId)) {
+            LOGGER.warn("Inspector id is null");
+            throw new UserNotFoundException("Inspector id is null");
+        }
+
+        return inspectorDao.findWithLessUsersExceptThisId(inspectorId)
+                .map(mapper::mapInspectorEntityToInspector)
+                .orElseThrow(() -> {
+                    LOGGER.warn("There is no other inspector in system");
+                    return new UserNotFoundException("There is no other inspector in system");
+                });
     }
 
     @Override
@@ -100,12 +143,14 @@ public class InspectorServiceImpl implements InspectorService {
 
     @Override
     public void updateInfo(Inspector inspector) {
-        if (!inspectorDao.findByLogin(inspector.getEmail()).isPresent()) {
-            LOGGER.warn("Inspector with such login doesnt exist");
-            throw new UserNotFoundException("Inspector with such login doesnt exist");
-        }
-        String encoded = encoder.encode(inspector.getPassword()).
-                orElseThrow(() -> new InvalidEncodingException("Encode process exception"));
+        validator.validateInspector(inspector);
+
+        String encoded = encoder.encode(inspector.getPassword())
+                .orElseThrow(() -> {
+                    LOGGER.warn("Encode process exception");
+                    return new InvalidEncodingException("Encode process exception");
+                });
+
         Inspector withEncodedPass = new Inspector(inspector, encoded);
         inspectorDao.update(mapper.mapInspectorToInspectorEntity(withEncodedPass));
     }

@@ -46,7 +46,7 @@ public class Action {
         return action;
     }
 
-    public static Builder builder(){
+    public static Builder builder() {
         return new Builder();
     }
 

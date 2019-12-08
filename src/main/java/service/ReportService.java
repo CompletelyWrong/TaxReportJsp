@@ -8,9 +8,9 @@ import java.util.List;
 public interface ReportService {
     void addReportToUser(Report report, User user);
 
-    void updateReportById(Report report, Long id);
+    void updateReport(Report report);
 
-    Report findById(Long id);
+    Report findById(Long reportId);
 
     List<Report> findReportsByUser(Long userId, int currentPage, int numOfRecords);
 
@@ -18,5 +18,5 @@ public interface ReportService {
 
     Integer getRowNumbers();
 
-    Integer getRowNumbersOfListByUser(Long id);
+    Integer getRowNumbersOfListByUser(Long userId);
 }

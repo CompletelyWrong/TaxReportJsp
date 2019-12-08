@@ -32,7 +32,7 @@ public class UserMapper {
                 .build();
     }
 
-    public UserEntity mapUserToUserEntityWithInspectorId(User user, Long id) {
+    public UserEntity mapUserToUserEntityWithInspectorId(User user, Long inspectorId) {
         return new UserEntity.UserBuilder()
                 .withIdentificationCode(user.getIdentificationCode())
                 .withRole(user.getRole())
@@ -42,11 +42,11 @@ public class UserMapper {
                 .withPassword(user.getPassword())
                 .withPatronymic(user.getPatronymic())
                 .withSurname(user.getSurname())
-                .withInspector(new InspectorEntity.InspectorBuilder().withId(id).build())
+                .withInspector(new InspectorEntity.InspectorBuilder().withId(inspectorId).build())
                 .build();
     }
 
-    public UserEntity mapUserEntityToUserEntityWithInspectorId(UserEntity user, Long id) {
+    public UserEntity mapUserEntityToUserEntityWithInspectorId(UserEntity user, Long inspectorId) {
         return new UserEntity.UserBuilder()
                 .withIdentificationCode(user.getIdentificationCode())
                 .withRole(user.getRole())
@@ -56,7 +56,7 @@ public class UserMapper {
                 .withPassword(user.getPassword())
                 .withPatronymic(user.getPatronymic())
                 .withSurname(user.getSurname())
-                .withInspector(new InspectorEntity.InspectorBuilder().withId(id).build())
+                .withInspector(new InspectorEntity.InspectorBuilder().withId(inspectorId).build())
                 .build();
     }
 }

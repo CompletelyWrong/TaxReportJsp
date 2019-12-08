@@ -10,5 +10,5 @@ public interface ActionService {
 
     List<Action> findAllForReportById(Long reportId, int rowCount, int startFrom);
 
-    Integer getRowCountForReportById(Long id);
+    Integer getRowCountForReportById(Long reportId);
 }

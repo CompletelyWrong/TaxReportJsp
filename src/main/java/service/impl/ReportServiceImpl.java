@@ -5,20 +5,20 @@ import domain.Report;
 import domain.User;
 import entity.report.ReportEntity;
 import exception.EntityNotFoundException;
-import exception.InvalidAddEntityException;
 import exception.InvalidPaginationException;
-import exception.InvalidUpdateEntityException;
 import org.apache.log4j.Logger;
 import service.ReportService;
 import service.mapper.ReportMapper;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static java.util.Objects.isNull;
 
 public class ReportServiceImpl implements ReportService {
     private static final Logger LOGGER = Logger.getLogger(ReportServiceImpl.class);
+
     private final ReportDao reportDao;
     private final ReportMapper mapper;
 
@@ -29,35 +29,44 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public void addReportToUser(Report report, User user) {
-        if (Objects.isNull(report) || Objects.isNull(user)) {
-            LOGGER.error("Parameters are empty");
-            throw new InvalidAddEntityException("Parameters are empty");
+        if (isNull(report) || isNull(user)) {
+            LOGGER.error("Report or user is null");
+            throw new IllegalArgumentException("Report or user is null");
         }
 
         reportDao.save(mapper.mapReportToReportEntity(report, user));
     }
 
     @Override
-    public void updateReportById(Report report, Long id) {
-        if (Objects.isNull(report) || Objects.isNull(id)) {
-            LOGGER.error("Parameters are empty");
-            throw new InvalidUpdateEntityException("Parameters are empty");
+    public void updateReport(Report report) {
+        if (isNull(report)) {
+            LOGGER.error("Report is null");
+            throw new IllegalArgumentException("Report is null");
         }
 
-        reportDao.update(mapper.mapReportToReportEntity(report, id));
+        reportDao.update(mapper.mapReportToReportEntity(report));
     }
 
     @Override
-    public Report findById(Long id) {
-        return mapper.mapReportEntityToReport(reportDao.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("report not found")));
+    public Report findById(Long reportId) {
+        if (isNull(reportId)) {
+            LOGGER.error("Report id is null");
+            throw new IllegalArgumentException("Report id is null");
+        }
+
+        return reportDao.findById(reportId)
+                .map(mapper::mapReportEntityToReport)
+                .orElseThrow(() -> {
+                    LOGGER.warn("There is no report with this such id");
+                    return new EntityNotFoundException("There is no report with this such id");
+                });
     }
 
     @Override
     public List<Report> findReportsByUser(Long userId, int currentPage, int numOfRecords) {
-        if (Objects.isNull(userId)) {
-            LOGGER.error("Parameters are empty");
-            throw new EntityNotFoundException("Parameters are empty");
+        if (isNull(userId)) {
+            LOGGER.error("User id is null");
+            throw new EntityNotFoundException("User id is null");
         }
         paginationValidating(currentPage, numOfRecords);
         List<ReportEntity> result = reportDao.findByUser(userId, currentPage, numOfRecords);

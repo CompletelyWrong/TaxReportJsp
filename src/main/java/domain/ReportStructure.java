@@ -39,7 +39,7 @@ public class ReportStructure {
         this.clearValue = builder.clearValue;
     }
 
-    private ReportStructure(){
+    private ReportStructure() {
     }
 
     public String getFullName() {
@@ -94,11 +94,11 @@ public class ReportStructure {
         return clearValue;
     }
 
-    public static Builder builder(){
+    public static Builder builder() {
         return new Builder();
     }
 
-    public static class Builder{
+    public static class Builder {
         private String fullName;
         private String type;
         private String innCode;
@@ -116,7 +116,7 @@ public class ReportStructure {
         private Builder() {
         }
 
-        public ReportStructure build(){
+        public ReportStructure build() {
             return new ReportStructure(this);
         }
 

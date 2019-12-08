@@ -18,11 +18,11 @@ public class ReportMapper {
                 .build();
     }
 
-    public ReportEntity mapReportToReportEntity(Report report, Long reportId) {
+    public ReportEntity mapReportToReportEntity(Report report) {
         return ReportEntity.builder()
                 .withCreationDate(report.getCreationDate())
                 .withFileLink(report.getFileLink())
-                .withId(reportId)
+                .withId(report.getId())
                 .withStatus(report.getStatus())
                 .withUser(new UserEntity.UserBuilder()
                         .withId(report.getUser().getId())

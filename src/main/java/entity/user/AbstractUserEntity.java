@@ -21,7 +21,6 @@ public abstract class AbstractUserEntity {
         this.role = abstractBuilder.role;
     }
 
-
     public Long getId() {
         return id;
     }

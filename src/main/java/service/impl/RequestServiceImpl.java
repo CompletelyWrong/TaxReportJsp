@@ -3,9 +3,7 @@ package service.impl;
 import dao.RequestDao;
 import domain.Request;
 import entity.request.RequestEntity;
-import exception.InvalidAddEntityException;
 import exception.InvalidPaginationException;
-import exception.InvalidUpdateEntityException;
 import org.apache.log4j.Logger;
 import service.RequestService;
 import service.mapper.RequestMapper;
@@ -18,6 +16,7 @@ import static java.util.Objects.isNull;
 
 public class RequestServiceImpl implements RequestService {
     private static final Logger LOGGER = Logger.getLogger(RequestServiceImpl.class);
+
     private final RequestDao requestDao;
     private final RequestMapper mapper;
 
@@ -29,26 +28,26 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public void createRequest(Request request) {
         if (isNull(request)) {
-            LOGGER.error("Parameters are empty");
-            throw new InvalidAddEntityException("Parameters are empty");
+            LOGGER.error("Request is null");
+            throw new IllegalArgumentException("Request is null");
         }
 
         requestDao.save(mapper.mapRequestToRequestEntity(request));
     }
 
     @Override
-    public void deleteRequestById(Long id) {
-        if (isNull(id)) {
-            LOGGER.error("Parameters are empty");
-            throw new InvalidUpdateEntityException("Parameters are empty");
+    public void deleteRequestById(Long requestId) {
+        if (isNull(requestId)) {
+            LOGGER.error("Request id is null");
+            throw new IllegalArgumentException("Request id is null");
         }
 
-        requestDao.deleteById(id);
+        requestDao.deleteById(requestId);
     }
 
     @Override
     public List<Request> findAll(int rowCount, int startFrom) {
-        paginationValidating(startFrom, rowCount);
+        paginationValidating(rowCount, startFrom);
         List<RequestEntity> result = requestDao.findAll(rowCount, startFrom);
 
         return entityMapping(result);

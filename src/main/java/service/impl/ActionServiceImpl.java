@@ -5,7 +5,6 @@ import domain.Action;
 import domain.Report;
 import entity.action.ActionEntity;
 import exception.EntityNotFoundException;
-import exception.InvalidAddEntityException;
 import exception.InvalidPaginationException;
 import org.apache.log4j.Logger;
 import service.ActionService;
@@ -13,11 +12,13 @@ import service.mapper.ActionMapper;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static java.util.Objects.isNull;
 
 public class ActionServiceImpl implements ActionService {
     private static final Logger LOGGER = Logger.getLogger(ActionServiceImpl.class);
+
     private final ActionDao actionDao;
     private final ActionMapper mapper;
 
@@ -28,9 +29,9 @@ public class ActionServiceImpl implements ActionService {
 
     @Override
     public void addActionForReport(Action action, Report report) {
-        if (Objects.isNull(action) || Objects.isNull(report)) {
-            LOGGER.error("addActionForReportByInspector - parameters are empty");
-            throw new InvalidAddEntityException("Parameters are empty");
+        if (isNull(action) || isNull(report)) {
+            LOGGER.error("Action or report is null");
+            throw new IllegalArgumentException("Action or report is null");
         }
 
         actionDao.save(mapper.mapActionToActionEntity(action, report));
@@ -38,10 +39,11 @@ public class ActionServiceImpl implements ActionService {
 
     @Override
     public List<Action> findAllForReportById(Long reportId, int rowCount, int startFrom) {
-        if (Objects.isNull(reportId)) {
-            LOGGER.error("parameters are empty");
-            throw new EntityNotFoundException("Parameters are empty");
+        if (isNull(reportId)) {
+            LOGGER.error("Report id is null");
+            throw new EntityNotFoundException("Report id is null");
         }
+
         paginationValidating(rowCount, startFrom);
         List<ActionEntity> result = actionDao.findAllForReportById(reportId, rowCount, startFrom);
 
@@ -49,8 +51,13 @@ public class ActionServiceImpl implements ActionService {
     }
 
     @Override
-    public Integer getRowCountForReportById(Long id) {
-        return actionDao.getRowCountForReportById(id);
+    public Integer getRowCountForReportById(Long reportId) {
+        if (isNull(reportId)) {
+            LOGGER.error("Report id is null");
+            throw new IllegalArgumentException("Report id is null");
+        }
+
+        return actionDao.getRowCountForReportById(reportId);
     }
 
     private void paginationValidating(int rowCount, int startFrom) {

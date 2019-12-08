@@ -9,7 +9,11 @@ public interface InspectorService {
 
     Inspector login(String login, String password);
 
-    Inspector findInspectorByUserId(Long id);
+    Inspector findInspectorByUserId(Long userId);
+
+    Inspector findWithLessUsers();
+
+    Inspector findWithLessUsersExceptThisId(Long inspectorId);
 
     List<Inspector> findAll(int rowCount, int startFrom);
 

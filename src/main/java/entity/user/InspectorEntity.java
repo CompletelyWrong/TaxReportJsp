@@ -66,6 +66,4 @@ public class InspectorEntity extends AbstractUserEntity {
         }
 
     }
-
-
 }

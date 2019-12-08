@@ -32,6 +32,7 @@ public class UserEntity extends AbstractUserEntity {
             return false;
         }
         UserEntity that = (UserEntity) o;
+
         return Objects.equals(identificationCode, that.identificationCode) &&
                 Objects.equals(inspectorEntity, that.inspectorEntity);
     }
