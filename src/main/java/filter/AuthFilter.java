@@ -15,18 +15,15 @@ public class AuthFilter implements Filter {
     public void doFilter(final ServletRequest request,
                          final ServletResponse response,
                          final FilterChain filterChain) throws IOException, ServletException {
-
         final HttpServletRequest req = (HttpServletRequest) request;
         final HttpServletResponse res = (HttpServletResponse) response;
-        Role role;
-
         final HttpSession session = req.getSession();
         String page;
 
         if (nonNull(session) &&
                 nonNull(session.getAttribute("role"))) {
 
-            role = (Role) session.getAttribute("role");
+            Role role = (Role) session.getAttribute("role");
 
             switch (role) {
                 case ADMIN:
@@ -40,7 +37,7 @@ public class AuthFilter implements Filter {
                     page = req.getContextPath() + "/user?command=show";
                     break;
                 default:
-                    page = req.getContextPath() + "index.jsp";
+                    page = req.getContextPath() + "/";
             }
             res.sendRedirect(page);
             filterChain.doFilter(request, response);

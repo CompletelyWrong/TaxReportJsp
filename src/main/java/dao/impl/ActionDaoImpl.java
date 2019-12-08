@@ -16,58 +16,22 @@ import java.util.List;
 public class ActionDaoImpl extends AbstractCrudDao<ActionEntity> implements ActionDao {
     private static final Logger LOGGER = Logger.getLogger(ActionDaoImpl.class);
 
-    private final DBConnector connector;
     private static final String SAVE_QUERY = "INSERT INTO actions (inspector_id, date, mesage, action_type_id, report_id)  values(?, ?, ?, ?, ?)";
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM actions WHERE id = ?";
     private static final String FIND_ALL_QUERY = "SELECT * FROM actions";
     private static final String FIND_ALL_PAGINATION_QUERY = "SELECT * FROM actions";
     private static final String UPDATE_QUERY = "UPDATE actions SET inspector_id =?, date=?, mesage=?,  action_type_id=?, report_id=? WHERE id = ?";
-    private static final String DELETE_BY_ID_QUERY = "UNSUPPORTED";
     private static final String COUNT_QUERY = "SELECT COUNT(*) AS count FROM actions";
     private static final String FIND_BY_ID_QUERY_PAGINATION = "SELECT * FROM actions WHERE report_id = ? LIMIT ?, ?";
     private static final String COUNT_BY_ID = "SELECT COUNT(*) AS count FROM actions WHERE report_id = ?";
 
     public ActionDaoImpl(DBConnector connector) {
-        super(connector, SAVE_QUERY, FIND_BY_ID_QUERY, FIND_ALL_QUERY, FIND_ALL_PAGINATION_QUERY,
-                UPDATE_QUERY, DELETE_BY_ID_QUERY, COUNT_QUERY);
-        this.connector = connector;
-    }
-
-    @Override
-    public List<ActionEntity> findAllForReportById(Long id, Integer currentPage, Integer recordsPerPage) {
-        try (Connection connection = connector.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_QUERY_PAGINATION)) {
-            int start = currentPage * recordsPerPage - recordsPerPage;
-
-            preparedStatement.setLong(1, id);
-            preparedStatement.setInt(2, start);
-            preparedStatement.setInt(3, recordsPerPage);
-            try (final ResultSet resultSet = preparedStatement.executeQuery()) {
-                List<ActionEntity> entities = new ArrayList<>();
-                while (resultSet.next()) {
-                    entities.add(mapResultSetToEntity(resultSet));
-                }
-                return entities;
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Invalid report search", e);
-            throw new DataBaseRuntimeException("Invalid report search", e);
-        }
+        super(connector, SAVE_QUERY, FIND_BY_ID_QUERY, FIND_ALL_QUERY, FIND_ALL_PAGINATION_QUERY, UPDATE_QUERY, COUNT_QUERY);
     }
 
     @Override
     public Integer getRowCountForReportById(Long id) {
-        try (Connection connection = connector.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(COUNT_BY_ID)) {
-            preparedStatement.setLong(1, id);
-
-            try (final ResultSet resultSet = preparedStatement.executeQuery()) {
-                return resultSet.next() ? resultSet.getInt("count") : 0;
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Invalid count rows report", e);
-            throw new DataBaseRuntimeException("Invalid count rows report", e);
-        }
+        return getRowCountForLongParam(id, COUNT_BY_ID);
     }
 
     @Override
@@ -89,6 +53,28 @@ public class ActionDaoImpl extends AbstractCrudDao<ActionEntity> implements Acti
         preparedStatement.setString(3, actionEntity.getMessage());
         preparedStatement.setInt(4, actionEntity.getAction().getIndex());
         preparedStatement.setInt(5, actionEntity.getReportEntity().getId().intValue());
+    }
+
+    @Override
+    public List<ActionEntity> findAllForReportById(Long reportId, Integer currentPage, Integer recordsPerPage) {
+        try (Connection connection = connector.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_QUERY_PAGINATION)) {
+            int start = currentPage * recordsPerPage - recordsPerPage;
+            preparedStatement.setLong(1, reportId);
+            preparedStatement.setInt(2, start);
+            preparedStatement.setInt(3, recordsPerPage);
+
+            try (final ResultSet resultSet = preparedStatement.executeQuery()) {
+                List<ActionEntity> entities = new ArrayList<>();
+                while (resultSet.next()) {
+                    entities.add(mapResultSetToEntity(resultSet));
+                }
+                return entities;
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Invalid insertion", e);
+            throw new DataBaseRuntimeException("Invalid insertion", e);
+        }
     }
 
     @Override

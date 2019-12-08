@@ -17,29 +17,28 @@ import java.util.Optional;
 
 public class UserDaoImpl extends AbstractCrudDao<UserEntity> implements UserDao {
     private static final Logger LOGGER = Logger.getLogger(UserDaoImpl.class);
-    private final DBConnector connector;
 
     private static final String SAVE_QUERY = "INSERT INTO users (email, password, name, surname, patronym, ind_code, role_id)  values(?, ?, ?, ?, ?, ?, ?)";
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM users WHERE id = ?";
     private static final String FIND_ALL_QUERY = "SELECT * FROM users";
     private static final String FIND_ALL_QUERY_PAGINATION = "SELECT * FROM users LIMIT ?, ?";
     private static final String UPDATE_QUERY = "UPDATE users SET email =?, password=?, name=?,  surname=?, patronym=?, ind_code=?, role_id=? WHERE id = ?";
-    private static final String DELETE_BY_ID_QUERY = "UNSUPPORTED";
     private static final String FIND_BY_EMAIL_QUERY = "SELECT * FROM users WHERE email = ?";
     private static final String COUNT_QUERY = "SELECT COUNT(*) AS count FROM users";
     private static final String SET_INSPECTOR_TO_USER_QUERY = "INSERT INTO inspectors_users (inspector_id, user_id, active) VALUES (?, ?, 'true')";
     private static final String UPDATE_INSPECTOR_TO_USER_QUERY = "UPDATE inspectors_users SET active='false' WHERE inspector_id = ? AND user_id = ?";
-    private static final String FIND_BY_INSPECTOR_ID_PAGINATION_QUERY = "SELECT users.id, users.email, users.password, users.name, users.surname, users.patronym, users.ind_code, users.role_id FROM mydb.users join mydb.inspectors_users " +
+    private static final String FIND_BY_INSPECTOR_ID_PAGINATION_QUERY = "SELECT users.id, users.email, users.password, users.name, users.surname," +
+            " users.patronym, users.ind_code, users.role_id FROM mydb.users join mydb.inspectors_users " +
             "ON users.id=inspectors_users.user_id WHERE inspectors_users.inspector_id=? AND inspectors_users.active=true LIMIT ?, ?";
-    private static final String FIND_BY_INSPECTOR_ID_QUERY = "SELECT users.id, users.email, users.password, users.name, users.surname, users.patronym, users.ind_code, users.role_id FROM mydb.users join mydb.inspectors_users " +
+    private static final String FIND_BY_INSPECTOR_ID_QUERY = "SELECT users.id, users.email, users.password, users.name, users.surname, " +
+            "users.patronym, users.ind_code, users.role_id FROM mydb.users join mydb.inspectors_users " +
             "ON users.id=inspectors_users.user_id WHERE inspectors_users.inspector_id=? AND inspectors_users.active=true";
     private static final String COUNT_BY_INSPECTOR_ID = "SELECT count(*) as count FROM mydb.users JOIN mydb.inspectors_users " +
             "ON users.id=inspectors_users.user_id WHERE inspectors_users.inspector_id=? AND inspectors_users.active=true";
 
 
     public UserDaoImpl(DBConnector connector) {
-        super(connector, SAVE_QUERY, FIND_BY_ID_QUERY, FIND_ALL_QUERY, FIND_ALL_QUERY_PAGINATION, UPDATE_QUERY, DELETE_BY_ID_QUERY, COUNT_QUERY);
-        this.connector = connector;
+        super(connector, SAVE_QUERY, FIND_BY_ID_QUERY, FIND_ALL_QUERY, FIND_ALL_QUERY_PAGINATION, UPDATE_QUERY, COUNT_QUERY);
     }
 
     @Override
@@ -48,37 +47,10 @@ public class UserDaoImpl extends AbstractCrudDao<UserEntity> implements UserDao 
     }
 
     @Override
-    public List<UserEntity> findAllByInspectorId(Long id) {
-        return findAllByIntParam(id, FIND_BY_INSPECTOR_ID_QUERY);
-    }
-
-    @Override
-    public List<UserEntity> findAllByInspectorId(Long id, Integer currentPage, Integer recordsPerPage) {
-        try (Connection connection = connector.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_INSPECTOR_ID_PAGINATION_QUERY)) {
-            int start = currentPage * recordsPerPage - recordsPerPage;
-
-            preparedStatement.setLong(1, id);
-            preparedStatement.setInt(2, start);
-            preparedStatement.setInt(3, recordsPerPage);
-            try (final ResultSet resultSet = preparedStatement.executeQuery()) {
-                List<UserEntity> entities = new ArrayList<>();
-                while (resultSet.next()) {
-                    entities.add(mapResultSetToEntity(resultSet));
-                }
-                return entities;
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Invalid user search", e);
-            throw new DataBaseRuntimeException("Invalid user search", e);
-        }
-    }
-
-    @Override
-    public Integer getRowCountByInspectorId(Long id) {
+    public Integer getRowCountByInspectorId(Long inspectorId) {
         try (Connection connection = connector.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(COUNT_BY_INSPECTOR_ID)) {
-            preparedStatement.setLong(1, id);
+            preparedStatement.setLong(1, inspectorId);
 
             try (final ResultSet resultSet = preparedStatement.executeQuery()) {
                 return resultSet.next() ? resultSet.getInt("count") : 0;
@@ -105,8 +77,8 @@ public class UserDaoImpl extends AbstractCrudDao<UserEntity> implements UserDao 
             connection.commit();
             connection.setAutoCommit(true);
         } catch (SQLException e) {
-            LOGGER.error("Invalid user insertion", e);
-            throw new DataBaseRuntimeException("Invalid user insertion", e);
+            LOGGER.error("Invalid insertion", e);
+            throw new DataBaseRuntimeException("Invalid insertion", e);
         }
     }
 
@@ -121,6 +93,28 @@ public class UserDaoImpl extends AbstractCrudDao<UserEntity> implements UserDao 
         } catch (SQLException e) {
             LOGGER.error("Invalid user insertion", e);
             throw new DataBaseRuntimeException("Invalid user insertion", e);
+        }
+    }
+
+    @Override
+    public List<UserEntity> findAllByInspectorId(Long inspectorId, Integer currentPage, Integer recordsPerPage) {
+        try (Connection connection = connector.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_INSPECTOR_ID_PAGINATION_QUERY)) {
+            int start = currentPage * recordsPerPage - recordsPerPage;
+
+            preparedStatement.setLong(1, inspectorId);
+            preparedStatement.setInt(2, start);
+            preparedStatement.setInt(3, recordsPerPage);
+            try (final ResultSet resultSet = preparedStatement.executeQuery()) {
+                List<UserEntity> entities = new ArrayList<>();
+                while (resultSet.next()) {
+                    entities.add(mapResultSetToEntity(resultSet));
+                }
+                return entities;
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Invalid user search", e);
+            throw new DataBaseRuntimeException("Invalid user search", e);
         }
     }
 
@@ -153,10 +147,5 @@ public class UserDaoImpl extends AbstractCrudDao<UserEntity> implements UserDao 
     protected void updateValues(PreparedStatement preparedStatement, UserEntity entityUser) throws SQLException {
         insert(preparedStatement, entityUser);
         preparedStatement.setLong(8, entityUser.getId());
-    }
-
-    @Override
-    public void deleteById(Long id) {
-        throw new UnsupportedOperationException("Unsupported operation");
     }
 }

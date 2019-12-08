@@ -2,13 +2,14 @@ package dao;
 
 import entity.user.InspectorEntity;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface InspectorDao extends CrudDao<InspectorEntity, Long> {
-    Optional<InspectorEntity> findByLogin(String login);
+    Optional<InspectorEntity> findByEmail(String email);
 
-    Optional<InspectorEntity> findByUserId(Long id);
+    Optional<InspectorEntity> findByUserId(Long userId);
 
-    List<InspectorEntity> findAllExceptThisId(Long id);
+    Optional<InspectorEntity> findWithLessUsers();
+
+    Optional<InspectorEntity> findWithLessUsersExceptThisId(Long inspectorId);
 }
