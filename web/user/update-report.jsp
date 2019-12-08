@@ -5,14 +5,16 @@
 <fmt:setBundle basename="text"/>
 <!DOCTYPE html>
 <!-- saved from url=(0054)https://getbootstrap.com/docs/4.0/examples/dashboard/# -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="https://getbootstrap.com/docs/4.0/assets/img/favicons/favicon.ico">
 
-    <title>Dashboard Template for Bootstrap</title>
+    <title><fmt:message key="report.update"/></title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/dashboard/">
 
@@ -22,7 +24,8 @@
     <!-- Custom styles for this template -->
     <link href="${pageContext.request.contextPath}/css/dashboard.css" rel="stylesheet">
     <style type="text/css">/* Chart.js */
-</style></head>
+    </style>
+</head>
 
 <body>
 <jsp:include page="/service-header.jsp"/>
@@ -33,13 +36,17 @@
 
     <h2 style="position: relative; width: 30%; left: 35%"><fmt:message key="report.update"/></h2>
     <section id="tabs">
-        <div style="position: relative; left: 5%; width: 30%"  class="container">
+        <div style="position: relative; left: 5%; width: 30%" class="container">
             <div class="row">
                 <div class="col-xs-12 ">
                     <nav>
                         <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
-                            <a class="nav-item nav-link active" id="nav-home-tab"  href="${pageContext.request.contextPath}/user?command=update_report&report_id=${report_id}"  aria-selected="true"><fmt:message key="report.form"/></a>
-                            <a class="nav-item nav-link" id="nav-profile-tab" href="${pageContext.request.contextPath}/user?command=update_report_file&report_id=${report_id}" aria-selected="false"><fmt:message key="report.file"/></a>
+                            <a class="nav-item nav-link active" id="nav-home-tab"
+                               href="${pageContext.request.contextPath}/user?command=update-report&reportId=${reportId}"
+                               aria-selected="true"><fmt:message key="report.form"/></a>
+                            <a class="nav-item nav-link" id="nav-profile-tab"
+                               href="${pageContext.request.contextPath}/user?command=update-report-file&reportId=${reportId}"
+                               aria-selected="false"><fmt:message key="report.file"/></a>
                         </div>
                     </nav>
 
@@ -49,75 +56,100 @@
         </div>
     </section>
     <div id="form" style="position: relative; width: 83%; left: 17%; ">
-        <div  class="col-md-8 order-md-1" >
-            <form method="post" action="${pageContext.request.contextPath}/user?command=update_report&report_id=${report_id}">
+        <div class="col-md-8 order-md-1">
+            <form method="post"
+                  action="${pageContext.request.contextPath}/user?command=update-report&reportId=${reportId}">
                 <div class="mb-3">
                     <label for="pib"><fmt:message key="report.pib"/></label>
-                    <input value="${reportStructure.fullName}"  type="text" class="form-control" id="pib" name="pib" required="">
+                    <input value="${report.fullName}" type="text" class="form-control" id="pib" name="pib"
+                           required="">
                 </div>
                 <div class="mb-3">
                     <label for="type"><fmt:message key="report.type"/></label>
-                    <input value="${reportStructure.type}"  type="text" class="form-control" id="type" name="type"  required="">
+                    <input value="${report.type}" type="text" class="form-control" id="type" name="type"
+                           required="">
                 </div>
                 <div class="mb-3">
                     <label for="code"><fmt:message key="reg.code"/></label>
-                    <input value="${reportStructure.innCode}"  style="width: 48%;" type="text" class="form-control" id="code"  name="code" required="">
+                    <input value="${report.innCode}" style="width: 48%;" type="text" class="form-control"
+                           id="code" name="code" required="">
                 </div>
                 <p style="position: relative;"><fmt:message key="report.period"/></p>
                 <div class="row" style="position: relative">
                     <div class="col-md-6 mb-3">
-                        <label for="date1"><fmt:message key="report.periodStart"/></label>
-                        <input value="${reportStructure.periodStart}"  style="width: 100%;" name="date" required id="date1" type="date" class="form-control">
+                        <label for="dateStart"><fmt:message key="report.periodStart"/></label>
+                        <input value="${report.periodStart}" style="width: 100%;" name="dateStart" required
+                               id="dateStart" type="date" class="form-control">
 
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label for="date2"><fmt:message key="report.periodEnd"/></label>
-                        <input value="${reportStructure.periodEnd}"  style="width: 100%;" name="date" required id="date2" type="date" class="form-control">
+                        <label for="dateEnd"><fmt:message key="report.periodEnd"/></label>
+                        <input value="${report.periodEnd}" style="width: 100%;" name="dateEnd" required
+                               id="dateEnd"
+                               type="date" class="form-control">
                     </div>
                 </div>
                 <p style="position: relative;"><fmt:message key="report.income"/></p>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <div class="form-label-group">
-                            <input value="${reportStructure.incomeCode}"  style="width: 100%;" type="text" name="incomeCode" id="incomeCode" class="form-control" placeholder="<fmt:message key="report.incomeCode"/>" required autofocus>
+                            <input value="${report.incomeCode}" style="width: 100%;" type="text"
+                                   name="incomeCode" id="incomeCode" class="form-control"
+                                   placeholder="<fmt:message key="report.incomeCode"/>" required autofocus>
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <input value="${reportStructure.incomeValue}"  style="width: 100%;" type="text" name="incomeValue" id="incomeValue" class="form-control" placeholder="<fmt:message key="report.incomeValue"/>" required autofocus>
+                        <input value="${report.incomeValue}" style="width: 100%;" type="text"
+                               name="incomeValue" id="incomeValue" class="form-control"
+                               placeholder="<fmt:message key="report.incomeValue"/>" required autofocus>
                     </div>
                 </div>
                 <p style="position: relative;"><fmt:message key="report.outcome"/></p>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <input value="${reportStructure.outcomeCode}"  style="width: 100%;"  type="text" name="outcomeCode" id="outcomeCode" class="form-control" placeholder="<fmt:message key="report.incomeCode"/>" required autofocus>
+                        <input value="${report.outcomeCode}" style="width: 100%;" type="text"
+                               name="outcomeCode" id="outcomeCode" class="form-control"
+                               placeholder="<fmt:message key="report.incomeCode"/>" required autofocus>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <input value="${reportStructure.outcomeValue}"  style="width: 100%;"  type="text" name="outcomeValue" id="outcomeValue" class="form-control" placeholder="<fmt:message key="report.incomeValue"/>" required autofocus>
+                        <input value="${report.outcomeValue}" style="width: 100%;" type="text"
+                               name="outcomeValue" id="outcomeValue" class="form-control"
+                               placeholder="<fmt:message key="report.incomeValue"/>" required autofocus>
                     </div>
                 </div>
                 <p style="position: relative;"><fmt:message key="report.procent"/></p>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <input value="${reportStructure.percentCode}"  style="width: 100%;"  type="text" name="procentCode" id="procentCode" class="form-control" placeholder="<fmt:message key="report.incomeCode"/>" required autofocus>
+                        <input value="${report.percentCode}" style="width: 100%;" type="text"
+                               name="percentCode" id="percentCode" class="form-control"
+                               placeholder="<fmt:message key="report.incomeCode"/>" required autofocus>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <input value="${reportStructure.percentValue}"  style="width: 100%;"  type="text" name="procentValue" id="procentValue" class="form-control" placeholder="<fmt:message key="report.incomeValue"/>" required autofocus>
+                        <input value="${report.percentValue}" style="width: 100%;" type="text"
+                               name="percentValue" id="percentValue" class="form-control"
+                               placeholder="<fmt:message key="report.incomeValue"/>" required autofocus>
                     </div>
                 </div>
                 <p style="position: relative;"><fmt:message key="request.clear"/></p>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <input value="${reportStructure.clearCode}"  style="width: 100%;"  type="text" name="clearCode" id="clearCode" class="form-control" placeholder="<fmt:message key="report.incomeCode"/>" required autofocus>
+                        <input value="${report.clearCode}" style="width: 100%;" type="text" name="clearCode"
+                               id="clearCode" class="form-control" placeholder="<fmt:message key="report.incomeCode"/>"
+                               required autofocus>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <input value="${reportStructure.clearValue}"  style="width: 100%;"  type="text" name="clearValue" id="clearValue" class="form-control" placeholder="<fmt:message key="report.incomeValue"/>" required autofocus>
+                        <input value="${report.clearValue}" style="width: 100%;" type="text" name="clearValue"
+                               id="clearValue" class="form-control"
+                               placeholder="<fmt:message key="report.incomeValue"/>" required autofocus>
                     </div>
                 </div>
-                <button class="btn btn-primary btn-lg btn-block" style="width: 30%; position: relative; left: 38% " type="submit"><fmt:message key="request.submit"/></button>
+                <button class="btn btn-primary btn-lg btn-block" style="width: 30%; position: relative; left: 38% "
+                        type="submit"><fmt:message key="request.submit"/></button>
             </form>
         </div>
     </div>
 </main>
 
 
-</body></html>
+</body>
+</html>

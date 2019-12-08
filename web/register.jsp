@@ -15,14 +15,14 @@
 --%>
 <!doctype html>8
 <html lang="${sessionScope.locale}">
-<jsp:include page="simpleHeader.jsp" />
+<jsp:include page="simpleHeader.jsp"/>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Floating labels example for Bootstrap</title>
+    <title><fmt:message key="index.reg"/></title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/tooplate-style.css">
 
@@ -35,7 +35,6 @@
 <body>
 
 
-
 <!------ Include the above in your HEAD tag ---------->
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
@@ -46,63 +45,81 @@
         <article class="card-body mx-auto" style="max-width: 400px;">
             <h4 class="card-title mt-3 text-center"><fmt:message key="index.reg"/></h4>
             <p class="text-center"><fmt:message key="reg.all"/></p>
-            <form name = "register" method="post" action="${pageContext.request.contextPath}/register">
+            <form name="register" method="post" action="${pageContext.request.contextPath}/register">
                 <div class="form-group input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"> <i class="fa fa-user"></i> </span>
                     </div>
-                    <input name="fullName"  class="form-control" required pattern="[A-Za-zА-Яа-яїіІЇ]{2,30}" title="<fmt:message key="reg.nameHelp"/>" placeholder="<fmt:message key="reg.fname"/>" type="text">
+                    <input name="surname" class="form-control" required
+                           pattern="([A-Z])([a-z]{1,40})|([А-ЯІЇЄ]([a-яіїє]{1,30}))"
+                           title="<fmt:message key="reg.nameHelp"/>" placeholder="<fmt:message key="reg.fname"/>"
+                           type="text">
                 </div> <!-- form-group// -->
                 <div class="form-group input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"> <i class="fa fa-user"></i> </span>
                     </div>
-                    <input name="name1" class="form-control" required pattern="[A-Za-zА-Яа-яїіІЇ]{2,30}" title="<fmt:message key="reg.nameHelp"/>" placeholder="<fmt:message key="reg.name"/>" type="text">
+                    <input name="name" class="form-control" required
+                           pattern="([A-Z])([a-z]{1,40})|([А-ЯІЇЄ]([a-яіїє]{1,30}))"
+                           title="<fmt:message key="reg.nameHelp"/>" placeholder="<fmt:message key="reg.name"/>"
+                           type="text">
                 </div> <!-- form-group// -->
                 <div class="form-group input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"> <i class="fa fa-user"></i> </span>
                     </div>
-                    <input name="patron"  class="form-control" required pattern="[A-Za-zА-Яа-яїіІЇ]{2,30}" title="<fmt:message key="reg.nameHelp"/>" placeholder="<fmt:message key="reg.patron"/>" type="text">
+                    <input name="patronymic" class="form-control" required
+                           pattern="([A-Z])([a-z]{1,40})|([А-ЯІЇЄ]([a-яіїє]{1,30}))"
+                           title="<fmt:message key="reg.nameHelp"/>" placeholder="<fmt:message key="reg.patron"/>"
+                           type="text">
                 </div> <!-- form-group// -->
                 <div class="form-group input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
                     </div>
-                    <input name="email" id="email" class="form-control"  required  placeholder="<fmt:message key="reg.email"/>" type="email">
+                    <input name="email" id="email" class="form-control" required
+                           placeholder="<fmt:message key="reg.email"/>" type="email">
                 </div> <!-- form-group// -->
                 <div class="form-group input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
                     </div>
-                    <input id="password1" name="password1" class="form-control" required pattern="[\s\S]{6,15}" title="<fmt:message key="reg.passHelp"/>" placeholder="<fmt:message key="reg.password"/>" type="password">
+                    <input id="password" name="password" class="form-control" required pattern="([^\s][A-Za-z\d]{5,15})"
+                           title="<fmt:message key="reg.passHelp"/>" placeholder="<fmt:message key="reg.password"/>"
+                           type="password">
                 </div> <!-- form-group// -->
                 <div class="form-group input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
                     </div>
-                    <input id="password2" name="password2" class="form-control" required pattern="[\s\S]{6,15}" title="<fmt:message key="reg.passHelp"/>" placeholder="<fmt:message key="reg.spassword"/>" type="password">
+                    <input id="repeatedPassword" name="repeatedPassword" class="form-control" required
+                           pattern="([^\s][A-Za-z\d]{5,15})"
+                           title="<fmt:message key="reg.passHelp"/>" placeholder="<fmt:message key="reg.spassword"/>"
+                           type="password">
                 </div> <!-- form-group// -->
                 <div class="form-group input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"> <i class="fa fa-building"></i> </span>
                     </div>
-                    <select id="role_type" required name="role_type" class="form-control">
+                    <select id="roleType" required name="roleType" class="form-control">
                         <option disabled selected=""><fmt:message key="reg.type"/></option>
-                        <option id="4" value="4"><fmt:message key="reg.type1"/></option>
-                        <option id="3" value="3"><fmt:message key="reg.type2"/></option>
+                        <option id="4" value="INDIVIDUAL_TAXPAYER"><fmt:message key="reg.type1"/></option>
+                        <option id="3" value="LEGAL_TAXPAYER"><fmt:message key="reg.type2"/></option>
                     </select>
                 </div> <!-- form-group end.// -->
                 <div class="form-group input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"> <i class="fa fa-archive"></i> </span>
                     </div>
-                    <input id="number" name="number" class="form-control" required pattern="[\d]{8,10}" title="<fmt:message key="reg.codeHelp"/>" placeholder="<fmt:message key="reg.code"/>" type="text">
+                    <input id="innNumber" name="innNumber" class="form-control" required pattern="[\d]{8,10}"
+                           title="<fmt:message key="reg.codeHelp"/>" placeholder="<fmt:message key="reg.code"/>"
+                           type="text">
                 </div> <!-- form-group// -->
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary btn-block"><fmt:message key="index.reg"/></button>
                 </div> <!-- form-group// -->
-                <p class="text-center"><fmt:message key="reg.have"/>? <a href="${pageContext.request.contextPath}/login"><fmt:message key="log.form"/></a> </p>
+                <p class="text-center"><fmt:message key="reg.have"/>? <a
+                        href="${pageContext.request.contextPath}/login"><fmt:message key="log.form"/></a></p>
             </form>
         </article>
     </div> <!-- card.// -->

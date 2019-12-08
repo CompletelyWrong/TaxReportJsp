@@ -5,14 +5,16 @@
 <fmt:setBundle basename="text"/>
 <!DOCTYPE html>
 <!-- saved from url=(0054)https://getbootstrap.com/docs/4.0/examples/dashboard/# -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="https://getbootstrap.com/docs/4.0/assets/img/favicons/favicon.ico">
 
-    <title>Dashboard Template for Bootstrap</title>
+    <title><fmt:message key="admin.requestList"/></title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/dashboard/">
 
@@ -22,7 +24,8 @@
     <!-- Custom styles for this template -->
     <link href="${pageContext.request.contextPath}/css/dashboard.css" rel="stylesheet">
     <style type="text/css">/* Chart.js */
-</style></head>
+    </style>
+</head>
 
 <body>
 <jsp:include page="/service-header.jsp"/>
@@ -41,12 +44,16 @@
                     <th><fmt:message key="user.reportAction"/></th>
                     <th><fmt:message key="user.reportAction"/></th>
                 </tr>
-                <c:forEach items="${requests_list}" var="request">
+                <c:forEach items="${requests}" var="request">
                     <tr>
                         <td>${request.user.id}</td>
                         <td>${request.reason}</td>
-                        <td><a class="page-link" href="${pageContext.request.contextPath}/admin?command=accept_request&user_id=${request.user.id}"><fmt:message key="report.acc"/></a></td>
-                        <td><a class="page-link" href="${pageContext.request.contextPath}/admin?command=reject_request&user_id=${request.user.id}"><fmt:message key="report.rej"/></a></td>
+                        <td><a class="page-link"
+                               href="${pageContext.request.contextPath}/admin?command=accept-request&userId=${request.user.id}&requestId=${request.id}"><fmt:message
+                                key="report.acc"/></a></td>
+                        <td><a class="page-link"
+                               href="${pageContext.request.contextPath}/admin?command=reject-request&requestId=${request.id}"><fmt:message
+                                key="report.rej"/></a></td>
                     </tr>
                 </c:forEach>
             </table>
@@ -56,11 +63,11 @@
             <ul class="pagination">
                 <c:if test="${currentPage != 1}">
                     <li class="page-item"><a class="page-link"
-                                             href="${pageContext.request.contextPath}/user?command=show&currentPage=${currentPage-1}"><</a>
+                                             href="${pageContext.request.contextPath}/admin?command=requests&currentPage=${currentPage-1}"><</a>
                     </li>
                 </c:if>
 
-                <c:forEach begin="1" end="${noOfPages}" var="i">
+                <c:forEach begin="1" end="${numberOfPages}" var="i">
                     <c:choose>
                         <c:when test="${currentPage eq i}">
                             <li class="page-item active"><a class="page-link">
@@ -69,15 +76,15 @@
                         </c:when>
                         <c:otherwise>
                             <li class="page-item"><a class="page-link"
-                                                     href="${pageContext.request.contextPath}/user?command=show&currentPage=${i}">${i}</a>
+                                                     href="${pageContext.request.contextPath}/admin?command=requests&currentPage=${i}">${i}</a>
                             </li>
                         </c:otherwise>
                     </c:choose>
                 </c:forEach>
 
-                <c:if test="${currentPage lt noOfPages}">
+                <c:if test="${currentPage lt numberOfPages}">
                     <li class="page-item"><a class="page-link"
-                                             href="${pageContext.request.contextPath}/user?command=show&currentPage=${currentPage+1}">></a>
+                                             href="${pageContext.request.contextPath}/admin?command=requests&currentPage=${currentPage+1}">></a>
                     </li>
                 </c:if>
             </ul>
@@ -88,4 +95,5 @@
     </div>
 </main>
 
-</body></html>
+</body>
+</html>
