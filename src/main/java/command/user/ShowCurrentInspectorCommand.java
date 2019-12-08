@@ -7,16 +7,16 @@ import service.InspectorService;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class ShowCurrentInspector implements Command {
+public class ShowCurrentInspectorCommand implements Command {
     private final InspectorService inspectorService;
 
-    public ShowCurrentInspector(InspectorService inspectorService) {
+    public ShowCurrentInspectorCommand(InspectorService inspectorService) {
         this.inspectorService = inspectorService;
     }
 
     @Override
     public String execute(HttpServletRequest request) {
-        User user = (User) request.getSession().getAttribute("user");
+        User user = getUser(request);
         Inspector currentInspector = inspectorService.findInspectorByUserId(user.getId());
         request.setAttribute("inspector", currentInspector);
 

@@ -5,17 +5,17 @@ import service.RequestService;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class RejectRequest implements Command {
+public class RejectRequestCommand implements Command {
     private final RequestService requestService;
 
-    public RejectRequest(RequestService requestService) {
+    public RejectRequestCommand(RequestService requestService) {
         this.requestService = requestService;
     }
 
     @Override
     public String execute(HttpServletRequest request) {
-        Long id = Long.valueOf(request.getParameter("request_id"));
-        requestService.deleteRequestById(id);
+        Long requestId = Long.valueOf(request.getParameter("requestId"));
+        requestService.deleteRequestById(requestId);
 
         return "/admin?command=requests";
     }

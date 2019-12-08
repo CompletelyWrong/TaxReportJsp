@@ -8,10 +8,10 @@ import service.RequestService;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
-public class CreateRequest implements Command {
+public class CreateRequestCommand implements Command {
     private final RequestService requestService;
 
-    public CreateRequest(RequestService requestService) {
+    public CreateRequestCommand(RequestService requestService) {
         this.requestService = requestService;
     }
 
@@ -19,11 +19,11 @@ public class CreateRequest implements Command {
     public String execute(HttpServletRequest request) {
         if (Objects.nonNull(request.getParameter("reason"))) {
             final String reason = request.getParameter("reason");
-            System.out.println(reason);
-            User user = (User) request.getSession().getAttribute("user");
+            User user = getUser(request);
             Request userRequest = new Request(user, reason);
             requestService.createRequest(userRequest);
         }
+
         return "/user/create-request.jsp";
     }
 }
