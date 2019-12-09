@@ -16,18 +16,18 @@ import java.util.Optional;
 public class InspectorDaoImpl extends AbstractCrudDao<InspectorEntity> implements InspectorDao {
     private static final Logger LOGGER = Logger.getLogger(InspectorDaoImpl.class);
 
-    private static final String SAVE_QUERY = "INSERT INTO inspectors (login, password, name, surname, patronym, role_id)  values(?, ?, ?, ?, ?, ?)";
+    private static final String SAVE_QUERY = "INSERT INTO inspectors (login, password, name, surname, patronymic, role_id)  values(?, ?, ?, ?, ?, ?)";
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM inspectors WHERE id = ?";
     private static final String FIND_ALL_QUERY = "SELECT * FROM inspectors WHERE role_id=2";
     private static final String FIND_ALL_PAGINATION_QUERY = "SELECT * FROM inspectors WHERE role_id=2 LIMIT ?, ?";
-    private static final String UPDATE_QUERY = "UPDATE inspectors SET login =?, password=?, name=?,  surname=?, patronym=?, role_id=? WHERE id = ?";
+    private static final String UPDATE_QUERY = "UPDATE inspectors SET login =?, password=?, name=?,  surname=?, patronymic=?, role_id=? WHERE id = ?";
     private static final String FIND_BY_LOGIN_QUERY = "SELECT * FROM inspectors WHERE login = ?";
     private static final String COUNT_QUERY = "SELECT COUNT(*) AS count FROM inspectors WHERE role_id=2";
-    private static final String FIND_BY_USER = "SELECT id, login, password, name, surname, patronym, role_id FROM inspectors JOIN inspectors_users" +
+    private static final String FIND_BY_USER = "SELECT id, login, password, name, surname, patronymic, role_id FROM inspectors JOIN inspectors_users" +
             " ON inspectors.id=inspectors_users.inspector_id where inspectors_users.user_id=? and inspectors_users.active=true";
-    private static final String FIND_WITH_LESS_USERS_QUERY = "SELECT id, login, password, name, surname, patronym, role_id FROM inspectors left join" +
+    private static final String FIND_WITH_LESS_USERS_QUERY = "SELECT id, login, password, name, surname, patronymic, role_id FROM inspectors left join" +
             " inspectors_users on inspectors.id=inspectors_users.inspector_id where role_id=2  GROUP BY id order by COUNT(*) asc LIMIT 1";
-    private static final String FIND_WITH_LESS_USERS_EXCEPT_THIS_ID_QUERY = "SELECT id, login, password, name, surname, patronym, role_id FROM inspectors " +
+    private static final String FIND_WITH_LESS_USERS_EXCEPT_THIS_ID_QUERY = "SELECT id, login, password, name, surname, patronymic, role_id FROM inspectors " +
             "left join inspectors_users on inspectors.id=inspectors_users.inspector_id where role_id=2 and id<>?  GROUP BY id order by COUNT(*)  asc LIMIT 1";
 
     public InspectorDaoImpl(DBConnector connector) {
@@ -65,7 +65,7 @@ public class InspectorDaoImpl extends AbstractCrudDao<InspectorEntity> implement
                 .withPassword(resultSet.getString("password"))
                 .withName(resultSet.getString("name"))
                 .withSurname(resultSet.getString("surname"))
-                .withPatronymic(resultSet.getString("patronym"))
+                .withPatronymic(resultSet.getString("patronymic"))
                 .withRole(resultSet.getInt("role_id") == 1 ? Role.ADMIN : Role.INSPECTOR)
                 .build();
     }

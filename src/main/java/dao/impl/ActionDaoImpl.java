@@ -16,11 +16,11 @@ import java.util.List;
 public class ActionDaoImpl extends AbstractCrudDao<ActionEntity> implements ActionDao {
     private static final Logger LOGGER = Logger.getLogger(ActionDaoImpl.class);
 
-    private static final String SAVE_QUERY = "INSERT INTO actions (inspector_id, date, mesage, action_type_id, report_id)  values(?, ?, ?, ?, ?)";
+    private static final String SAVE_QUERY = "INSERT INTO actions (inspector_id, date, message, action_type_id, report_id)  values(?, ?, ?, ?, ?)";
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM actions WHERE id = ?";
     private static final String FIND_ALL_QUERY = "SELECT * FROM actions";
     private static final String FIND_ALL_PAGINATION_QUERY = "SELECT * FROM actions";
-    private static final String UPDATE_QUERY = "UPDATE actions SET inspector_id =?, date=?, mesage=?,  action_type_id=?, report_id=? WHERE id = ?";
+    private static final String UPDATE_QUERY = "UPDATE actions SET inspector_id =?, date=?, message=?,  action_type_id=?, report_id=? WHERE id = ?";
     private static final String COUNT_QUERY = "SELECT COUNT(*) AS count FROM actions";
     private static final String FIND_BY_ID_QUERY_PAGINATION = "SELECT * FROM actions WHERE report_id = ? LIMIT ?, ?";
     private static final String COUNT_BY_ID = "SELECT COUNT(*) AS count FROM actions WHERE report_id = ?";
@@ -40,7 +40,7 @@ public class ActionDaoImpl extends AbstractCrudDao<ActionEntity> implements Acti
                 withId(resultSet.getLong("id"))
                 .withInspector(new InspectorEntity.InspectorBuilder().withId((long) resultSet.getInt("inspector_id")).build())
                 .withDate(resultSet.getTimestamp("date").toLocalDateTime())
-                .withMessage(resultSet.getString("mesage"))
+                .withMessage(resultSet.getString("message"))
                 .withActionType(setActionType(resultSet.getInt("action_type_id")))
                 .withReport(ReportEntity.builder().withId((long) resultSet.getInt("report_id")).build())
                 .build();

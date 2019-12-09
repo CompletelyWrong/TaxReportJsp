@@ -34,8 +34,8 @@ public class XmlHelper extends AbstractFileHelper {
         byFileContent(fileContent, file);
     }
 
-    private void byFileContent(String fileContent, File gsonFile) {
-        try (Writer writer = new FileWriter(gsonFile)) {
+    private void byFileContent(String fileContent, File file) {
+        try (Writer writer = new FileWriter(file)) {
             JAXBContext jaxbContext = JAXBContext.newInstance(ReportStructure.class);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             ReportStructure reportStructure = (ReportStructure) jaxbUnmarshaller.unmarshal(new StringReader(fileContent));

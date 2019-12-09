@@ -18,21 +18,18 @@ import java.util.Optional;
 public class UserDaoImpl extends AbstractCrudDao<UserEntity> implements UserDao {
     private static final Logger LOGGER = Logger.getLogger(UserDaoImpl.class);
 
-    private static final String SAVE_QUERY = "INSERT INTO users (email, password, name, surname, patronym, ind_code, role_id)  values(?, ?, ?, ?, ?, ?, ?)";
+    private static final String SAVE_QUERY = "INSERT INTO users (email, password, name, surname, patronymic, ind_code, role_id)  values(?, ?, ?, ?, ?, ?, ?)";
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM users WHERE id = ?";
     private static final String FIND_ALL_QUERY = "SELECT * FROM users";
     private static final String FIND_ALL_QUERY_PAGINATION = "SELECT * FROM users LIMIT ?, ?";
-    private static final String UPDATE_QUERY = "UPDATE users SET email =?, password=?, name=?,  surname=?, patronym=?, ind_code=?, role_id=? WHERE id = ?";
+    private static final String UPDATE_QUERY = "UPDATE users SET email =?, password=?, name=?,  surname=?, patronymic=?, ind_code=?, role_id=? WHERE id = ?";
     private static final String FIND_BY_EMAIL_QUERY = "SELECT * FROM users WHERE email = ?";
     private static final String COUNT_QUERY = "SELECT COUNT(*) AS count FROM users";
     private static final String SET_INSPECTOR_TO_USER_QUERY = "INSERT INTO inspectors_users (inspector_id, user_id, active) VALUES (?, ?, 'true')";
     private static final String UPDATE_INSPECTOR_TO_USER_QUERY = "UPDATE inspectors_users SET active='false' WHERE inspector_id = ? AND user_id = ?";
     private static final String FIND_BY_INSPECTOR_ID_PAGINATION_QUERY = "SELECT users.id, users.email, users.password, users.name, users.surname," +
-            " users.patronym, users.ind_code, users.role_id FROM mydb.users join mydb.inspectors_users " +
+            " users.patronymic, users.ind_code, users.role_id FROM mydb.users join mydb.inspectors_users " +
             "ON users.id=inspectors_users.user_id WHERE inspectors_users.inspector_id=? AND inspectors_users.active=true LIMIT ?, ?";
-    private static final String FIND_BY_INSPECTOR_ID_QUERY = "SELECT users.id, users.email, users.password, users.name, users.surname, " +
-            "users.patronym, users.ind_code, users.role_id FROM mydb.users join mydb.inspectors_users " +
-            "ON users.id=inspectors_users.user_id WHERE inspectors_users.inspector_id=? AND inspectors_users.active=true";
     private static final String COUNT_BY_INSPECTOR_ID = "SELECT count(*) as count FROM mydb.users JOIN mydb.inspectors_users " +
             "ON users.id=inspectors_users.user_id WHERE inspectors_users.inspector_id=? AND inspectors_users.active=true";
 
@@ -126,7 +123,7 @@ public class UserDaoImpl extends AbstractCrudDao<UserEntity> implements UserDao 
                 .withPassword(resultSet.getString("password"))
                 .withName(resultSet.getString("name"))
                 .withSurname(resultSet.getString("surname"))
-                .withPatronymic(resultSet.getString("patronym"))
+                .withPatronymic(resultSet.getString("patronymic"))
                 .withRole(resultSet.getInt("role_id") == 4 ? Role.INDIVIDUAL_TAXPAYER : Role.LEGAL_TAXPAYER)
                 .withIdentificationCode(resultSet.getInt("ind_code"))
                 .build();
