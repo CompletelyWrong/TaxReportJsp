@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.util.Objects;
 
 
 public class JsonHelper extends AbstractFileHelper {
@@ -17,7 +18,7 @@ public class JsonHelper extends AbstractFileHelper {
 
         try (Reader reader = new FileReader(fileUrl)) {
             structure = new Gson().fromJson(reader, ReportStructure.class);
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             LOGGER.warn("Your file was corrupted", e);
             throw new ReportFileException("Your file was corrupted", e);
         }
@@ -39,6 +40,11 @@ public class JsonHelper extends AbstractFileHelper {
     }
 
     public String createJsonFileByForm(ReportStructure formContent) {
+        if (Objects.isNull(formContent)) {
+            LOGGER.warn("Your file has wrong structure");
+            throw new ReportFileException("Your file has wrong structure");
+        }
+
         File jsonFile = getFile();
 
         try {
@@ -75,13 +81,13 @@ public class JsonHelper extends AbstractFileHelper {
         try (Writer writer = new FileWriter(jsonFile)) {
             Gson gson = new GsonBuilder().create();
             gson.toJson(formContent, writer);
-        } catch (JsonSyntaxException | IOException e) {
+        } catch (JsonSyntaxException | IOException | NullPointerException e) {
             LOGGER.warn("Your file has wrong structure", e);
             throw new ReportFileException("Your file has wrong structure", e);
         }
     }
 
-    protected void validate(String jsonContent) {
+    private void validate(String jsonContent) {
         JsonObject asJsonObject;
 
         try {

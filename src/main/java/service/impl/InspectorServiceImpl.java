@@ -85,7 +85,7 @@ public class InspectorServiceImpl implements InspectorService {
     public Inspector findInspectorByUserId(Long userId) {
         if (isNull(userId)) {
             LOGGER.warn("User id is null");
-            throw new UserNotFoundException("User id is null");
+            throw new IllegalArgumentException("User id is null");
         }
 
         return inspectorDao.findByUserId(userId)
@@ -110,7 +110,7 @@ public class InspectorServiceImpl implements InspectorService {
     public Inspector findWithLessUsersExceptThisId(Long inspectorId) {
         if (isNull(inspectorId)) {
             LOGGER.warn("Inspector id is null");
-            throw new UserNotFoundException("Inspector id is null");
+            throw new IllegalArgumentException("Inspector id is null");
         }
 
         return inspectorDao.findWithLessUsersExceptThisId(inspectorId)
@@ -125,13 +125,6 @@ public class InspectorServiceImpl implements InspectorService {
     public List<Inspector> findAll(int rowCount, int startFrom) {
         paginationValidating(rowCount, startFrom);
         List<InspectorEntity> result = inspectorDao.findAll(rowCount, startFrom);
-
-        return entityMapping(result);
-    }
-
-    @Override
-    public List<Inspector> findAll() {
-        List<InspectorEntity> result = inspectorDao.findAll();
 
         return entityMapping(result);
     }

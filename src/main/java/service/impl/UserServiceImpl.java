@@ -106,6 +106,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateInfo(User user) {
         validator.validateUser(user);
+
         if (!userDao.findByEmail(user.getEmail()).isPresent()) {
             LOGGER.warn("There is no User with such email");
             throw new AlreadyExistUserException("There is no User with such email");
@@ -150,6 +151,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> findAllByInspectorId(Long inspectorId, int rowCount, int startFrom) {
+        if (isNull(inspectorId)) {
+            LOGGER.warn("Inspector id is null");
+            throw new IllegalArgumentException("Inspector id is null");
+        }
+
         paginationValidating(rowCount, startFrom);
         List<UserEntity> result = userDao.findAllByInspectorId(inspectorId, rowCount, startFrom);
 

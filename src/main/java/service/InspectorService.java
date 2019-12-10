@@ -17,8 +17,6 @@ public interface InspectorService {
 
     List<Inspector> findAll(int rowCount, int startFrom);
 
-    List<Inspector> findAll();
-
     Integer getRowNumbers();
 
     void updateInfo(Inspector inspector);

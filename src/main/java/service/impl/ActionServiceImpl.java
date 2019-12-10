@@ -4,7 +4,6 @@ import dao.ActionDao;
 import domain.Action;
 import domain.Report;
 import entity.action.ActionEntity;
-import exception.EntityNotFoundException;
 import exception.InvalidPaginationException;
 import org.apache.log4j.Logger;
 import service.ActionService;
@@ -41,7 +40,7 @@ public class ActionServiceImpl implements ActionService {
     public List<Action> findAllForReportById(Long reportId, int rowCount, int startFrom) {
         if (isNull(reportId)) {
             LOGGER.error("Report id is null");
-            throw new EntityNotFoundException("Report id is null");
+            throw new IllegalArgumentException("Report id is null");
         }
 
         paginationValidating(rowCount, startFrom);

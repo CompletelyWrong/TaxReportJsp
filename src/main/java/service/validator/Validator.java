@@ -5,6 +5,7 @@ import domain.User;
 import exception.InvalidRegistrationException;
 import org.apache.log4j.Logger;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,16 +25,17 @@ public class Validator {
     private static final Pattern INN_CODE_PATTERN = Pattern.compile(INN_CODE_REGEX);
 
     public void validateUser(User user) {
-        if (user == null) {
+        if (Objects.isNull(user)) {
             LOGGER.warn("User is not valid");
             throw new InvalidRegistrationException("User is not valid");
         }
+
         validateByParam(user.getName(), NAME_PATTERN, "Incorrect name");
         validateByParam(user.getSurname(), SURNAME_PATTERN, "Incorrect surname");
-        validateByParam(user.getPatronymic(), PATRONYMIC_PATTERN, "Incorrect surname");
+        validateByParam(user.getPatronymic(), PATRONYMIC_PATTERN, "Incorrect patronymic");
         validateByParam(user.getEmail(), EMAIL_PATTERN, "Incorrect e-mail");
         validateByParam(user.getPassword(), PASSWORD_PATTERN, "Incorrect password");
-        validateByParam(user.getIdentificationCode().toString(), INN_CODE_PATTERN, "Incorrect password");
+        validateByParam(user.getIdentificationCode().toString(), INN_CODE_PATTERN, "Incorrect inn code");
     }
 
     public void validateInspector(Inspector inspector) {
@@ -43,7 +45,7 @@ public class Validator {
         }
         validateByParam(inspector.getName(), NAME_PATTERN, "Incorrect name");
         validateByParam(inspector.getSurname(), SURNAME_PATTERN, "Incorrect surname");
-        validateByParam(inspector.getPatronymic(), PATRONYMIC_PATTERN, "Incorrect surname");
+        validateByParam(inspector.getPatronymic(), PATRONYMIC_PATTERN, "Incorrect patronymic");
         validateByParam(inspector.getEmail(), EMAIL_PATTERN, "Incorrect e-mail");
         validateByParam(inspector.getPassword(), PASSWORD_PATTERN, "Incorrect password");
     }
